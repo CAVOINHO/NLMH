@@ -17,8 +17,11 @@ for i in range(len(nhan)):
 print("Số lương phần tử nhã 0: ", h)
 print("Số lương phần tử nhã 1: ", k)
 
+thuoctinh = dt.iloc[:,0:57]
+nhan = dt.iloc[:, 57:58]
+
 from sklearn.model_selection import train_test_split
-X_train,X_test,y_train,y_test = train_test_split( dt.iloc[:,0:57], dt.iloc[:, 57:58], test_size=0.1, random_state=50)
+X_train,X_test,y_train,y_test = train_test_split(thuoctinh, nhan , test_size=0.1, random_state=50)
 
 print("Số lượng phần tử trong tập huấn luyện: ", len(X_train))
 print("Số lượng phần tử trong tập kiểm tra: ", len(X_test))
@@ -42,9 +45,10 @@ print("Kết quả của giải thuật Bayes thơ ngây nghi thức hold on: ",
 
 from sklearn.metrics import confusion_matrix
 
-kq =  confusion_matrix(thucte, dubao)
+kq1 =  confusion_matrix(thucte, dubao)
 
-print("Độ chính xác từng lớp: \n",kq)
+print("Độ chính xác từng lớp: \n",'[',np.unique(nhan)[0],'  ',np.unique(nhan)[1],']')
+print(kq1)
 print("___________________________________________________________________")
 print("")
 print("HOLD ON DECISION TREE")
@@ -59,9 +63,10 @@ print("Kết quả của giải thuật Cây quyết định: ",K2,"%")
 
 from sklearn.metrics import confusion_matrix
 
-kq =  confusion_matrix(y_test, y_pred)
+kq2 =  confusion_matrix(y_test, y_pred)
 
-print("Độ chính xác từng lớp: \n",kq)
+print("Độ chính xác từng lớp: \n",'[',np.unique(nhan)[0],'  ',np.unique(nhan)[1],']')
+print(kq2)
 print("___________________________________________________________________")
 print("")
 print("K_FOLD BAYES")
@@ -82,10 +87,11 @@ for train_index, test_index in kf.split(X):
    thucte = y_test
    dubao = model.predict(X_test)
    from sklearn.metrics import confusion_matrix
-   cnf_matrix_gnb = confusion_matrix(thucte, dubao)
+   kq3 = confusion_matrix(thucte, dubao)
    t+=1;
    print("Lần lặp thứ",t,":" )
-   print(cnf_matrix_gnb)
+   print("Độ chính xác từng lớp: \n",'[',np.unique(nhan)[0],'  ',np.unique(nhan)[1],']')
+   print(kq3)
    print("")
    from sklearn.metrics import accuracy_score
    j = accuracy_score(thucte, dubao)*100
