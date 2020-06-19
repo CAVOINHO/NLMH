@@ -23,13 +23,13 @@ def Hold_out(dirfile, n):
       model.fit(X_train, y_train.values.ravel())
       thucte = y_test
       dubao = model.predict(X_test)
-      K1 = round(accuracy_score(y_test, dubao)*100, 1)
+      K1 = round(accuracy_score(y_test, dubao)*100, 2)
       K1_list.append(K1)
       avegrade += K1
       kq1 =  confusion_matrix(thucte, dubao)
       Kq1_list.append(kq1)
 
-   return [len(dt), X_train, X_test, K1_list, Kq1_list, avegrade/n]
+   return [len(dt), X_train, y_test, K1_list, kq1, avegrade/n]
 
 def K_Fold(dirfile, n):
    dt = pd.read_csv("spambase.data", delimiter=",", header=None)
@@ -63,7 +63,7 @@ def DT(dirfile):
    y_pred = clf_gini.predict(X_test)
    K2 =  round(accuracy_score(y_test, y_pred)*100, 2)
    kq2 =  confusion_matrix(y_test, y_pred)
-   return K2
+   return [K2, kq2]
 
 def Chart_main(dirfile, n):
    _,_,_,K,_,_ = Hold_out(dirfile, n)
@@ -78,7 +78,7 @@ def Chart_main(dirfile, n):
       size = 10)
    plt.title("Sơ đồ so sánh")
    plt.xlabel("Kết quả của lần lặp")
-   plt.ylabel("Độ chính xác")
+   plt.ylabel("Độ chính xác (%)")
    plt.show()
 
 def Chart_pie(dirfile, n):
@@ -98,34 +98,46 @@ def Chart_pie(dirfile, n):
 
 def Chart_column(dirfile, n):
    a,b,c,d,e,K1 = Hold_out(dirfile, n)
-   _,_,_,_,_,K3 = K_Fold(dirfile, n)
-   K2 = DT(dirfile)
+   _,_,_,_,f,K3 = K_Fold(dirfile, n)
+   K2,kq2 = DT(dirfile)
    x_values = [0,1,2]
    x = ["HOLD OUT BAYES", "HOLD OUT DT", "K_FOLD BAYES"]
    y_values = [5, 13, 5 ]
    division_marks = [round(K1,2), round(K2,2), round(K3,2)]
    plt.bar(x, division_marks, color='darkcyan')
    for i in range(len(division_marks)):
-      plt.text(x = x_values[i],
+      plt.text(x = x_values[i] - 0.15,
       y = y_values[i]+80,
       s = division_marks[i],
       size = 10)
    plt.title("Sơ đồ so sánh")
    plt.xlabel("Phương thức sử dụng")
-   plt.ylabel("Độ chính xác")
+   plt.ylabel("Độ chính xác (%)")
    plt.show()
    print('Số lượng phần tử tập dữ liệu: ', a)
    print('Số lượng phần tử tập huấn luyện: ', len(b))
    print('Số lượng phần tử tập kiểm tra: ', len(c))
+   print("")
+   print('ĐỘ CHÍNH XÁC CỦA GIẢI THUẬT')
+   print('Hold out: ', round(K1,2), "%")
+   print('Độ chính xác của từng phân lớp: \n', '[',np.unique(c)[0],'  ',np.unique(c)[1],']')
+   print(e)
+   print("")
+   print('Số lượng phần tử tập dữ liệu: ', a)
+   print('Số lượng phần tử tập huấn luyện: ', len(b))
+   print('Số lượng phần tử tập kiểm tra: ', len(c))
+   print("")
    print('___________________________')
    print('ĐỘ CHÍNH XÁC CỦA TỪNG GIẢI THUẬT')
    print('Hold out: ', round(K1,2), "%")
    print('K_Fold: ', round(K3,2), "%")
-   print('Decision Tree: ', round(K2), "%")
-def main():
-   dirfile = 'D:/BC/spambase.data'
+   print('Decision Tree: ', round(K2,2), "%")
 
-   Chart_main(dirfile, 10)
+def main():
+   dt = pd.read_csv("spambase.data", delimiter=",", header=None)
+   print(dt)
+   dirfile = 'D:/BC/spambase.data'
+   # Chart_main(dirfile, 10)
    # Chart_pie(dirfile, 10)
-   # Chart_column(dirfile, 10)
+   Chart_column(dirfile, 10)
 main()
